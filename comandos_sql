@@ -1,0 +1,684 @@
+-- COMANDO SELECT
+-- serve para selecionar colunas de tabelas
+
+-- SINTAXE
+SELECT coluna_1, coluna_2, coluna_3
+FROM schema_1.tabela_1
+
+-- ######################################
+
+-- EXEMPLOS
+-- (exemplo 1) Seleção de uma coluna de uma tabela
+-- Liste os e-mails dos clientes da tabela sales.customers
+
+SELECT email
+FROM sales.customers
+
+-- (exemplo 2) Seleção de mais de uma coluna de uma tabela
+-- Liste os emails e nomes dos clientes da tabela sales.customres
+SELECT email, first_name, last_name
+FROM sales.customers
+
+-- (exemplo 3) Seleção de todas as colunas de uma tabela
+-- Liste todos as informações dos clientes da tabela sales.customers
+SELECT *
+FROM sales.customers
+
+-- #################################
+
+-- COMANDO DISTINCT
+-- Serve para remover linhas duplicadas e mostrar apenas linhas distintas
+-- Muito usado na etapa de exploração das bases
+
+-- SINTAXE
+SELECT distinct coluna_1, coluna_2, coluna_3
+FROM schema_1.tabela_1
+
+-- (exemplo 1) Seleção de uma coluna sem DISTINCT
+-- Liste as marcas de carro que constam na tabela products
+SELECT brand
+FROM sales.products
+
+-- (exemplo 2) Seleção de uma coluna com DISTINCT
+-- Liste as marcas de carros distintas que constam na tablea products
+SELECT DISTINCT brand
+FROM sales.products
+
+-- (exemplo 3) Seleção de mais de uma coluna com DISTINST
+-- Liste as marcas e anos de modelo distintos que constam na tabela products
+SELECT DISTINCT brand, model_year
+FROM sales.products
+
+
+--  #################################
+
+-- COMANDO WHERE
+
+-- Serve para filtrar as linhas da tabela de acordo com uma condição
+
+-- SINTAXE
+SELECT coluna_1, coluna_2, coluna_3
+FROM schema_1.tabela_1
+WHERE condição_x=true
+
+-- (exemplo 1) Filtro com condição única
+-- Liste os emails dos clientes da nossa base que moram no estado de Santa Cataria
+SELECT email, state
+FROM sales.customers
+WHERE state= 'SC'
+
+-- (exemplo 2) Filtro com mais de uma condição
+-- Liste os emails dos clientes da nossa base que moram no estado de Santa Catarina
+-- ou Mato Grosso do Sul
+SELECT email, state
+FROM sales.customers
+WHERE state = 'SC' or state = 'MS'
+
+-- (exemplo 3) Filtro de condição com data
+-- Liste os emails dos clientes da nossa base que moram no estado de Santa Catarina
+-- ou Mato Grosso do Sul e que tem mais de 30 anos
+SELECT email, state
+FROM sales.customers
+WHERE (state = 'SC' or state = 'MS') and birth_date < '1991-12-28'
+
+select distinct birth_date from sales.customers
+
+-- ###################################
+
+-- COMANDO ORDER BY
+-- Serve para ordenar a seleção de acordo com uma regra definida pelo usuário
+
+-- SINTAXE
+SELECT coluna_1, coluna_2, coluna_3
+FROM schema_1.tabela_1
+WHERE condicao_x = true
+ORDER BY coluna_1
+
+-- (exemplo 1) Ordenação de valores numéricos
+-- Liste produtos da tabela products na ordem crescente com base no preço
+SELECT *
+FROM sales.products
+ORDER BY price DESC
+
+-- (exemplo 2) Ordenação de valores numéricos
+-- Liste os estados distintos da tabela customers na ordem crescente
+SELECT DISTINCT state
+FROM sales.customers
+ORDER BY state ASC
+
+
+-- ##################################
+
+-- COMANDO LIMIT
+-- Serve para limitar o nº de linhas da consulta
+-- Muito utilizado na etapa de exploração de dados
+
+-- SINTAXE
+SELECT coluna_1, coluna_2, coluna_3
+FROM schema_1.tabela_1
+WHERE condicao_1=true
+ORDER BY coluna_1
+LIMIT N
+
+-- (exemplo 1) Seleção das N primeiras linhas usando LIMIT
+-- Liste as 10 primeiras linhas da tabela funnel
+SELECT *
+FROM sales.funnel
+LIMIT 10
+
+-- (exemplo 2) Seleção das N primeiras linhas usando o LIMIT  e ORDER BY
+-- Liste os 10 produtos mais caros da tabela products
+SELECT *
+FROM sales.products
+ORDER BY price DESC
+LIMIT 10
+
+
+-- #############################
+
+
+
+-- EXERCÍCIOS ######################################################################
+
+-- (Exercício 1) Selecione os nomes de cidade distintas que existem no estado de
+-- Minas Gerais em ordem alfabética (dados da tabela sales.customers)
+SELECT DISTINCT city, state
+FROM sales.customers
+WHERE state = 'MG'
+ORDER BY city 
+
+
+-- (Exercício 2) Selecione o visit_id das 10 compras mais recentes efetuadas
+-- (dados da tabela sales.funnel)
+SELECT visit_id
+FROM sales.funnel
+WHERE paid_date is not null
+ORDER BY paid_date DESC 
+LIMIT 10
+
+
+-- (Exercício 3) Selecione todos os dados dos 10 clientes com maior score nascidos
+-- após 01/01/2000 (dados da tabela sales.customers)
+SELECT *
+FROM sales.customers
+WHERE birth_date >= '2000-01-01' 
+ORDER BY score DESC
+LIMIT 10
+
+
+-- ################################
+
+-- OPERADORES
+
+-- Servem para executar operações matemáticas
+-- Muito utilizados para criar colunas calculadas
+
+-- TIPOS DE OPERADORES
+-- + SOMA
+-- - SUBTRAÇÃO
+-- * MULTIPLICAÇÃO
+-- / DIVISÃO
+-- ^ EXPONENCIAL
+-- % MÔDULO
+-- || não é um operador mas faz soma de strings
+
+
+-- (exemplo 1) Criação de coluna calculada
+-- Crie uma coluna contendo a idade do cliente da tabela sales.custormes
+SELECT * 
+FROM sales.customers
+LIMIT 10
+
+SELECT 
+    email,
+    birth_date,
+    -- current_date traz a data atual
+    (current_date - birth_date) / 365 as idade_do_cliente  -- Para criar a coluna com o nome sem espaço e sem hífen, utilizar as apas duplas "Idade do Cliente"
+FROM sales.customers
+
+
+-- (exemplo 2) Utilização da coluna calculada nas queries
+-- Liste os 10 clientes mais novos da tabela customers
+SELECT email, birth_date,
+        (current_date - birth_date) / 365 as idade_do_cliente
+FROM sales.customers
+ORDER BY idade_do_cliente
+LIMIT 10
+
+
+-- (exemplo 3) Criação de coluna calculada com strings
+-- Crie a coluna "nome_completo" contendo o nome completo do cliente
+SELECT first_name ||' ' || last_name as nome_completo
+FROM sales.customers
+
+
+-- ##########################
+
+-- OPERADORES DE COMPARAÇÃO
+-- Serve para comparar dois valores retornando TRUE e FALSE
+-- Muito utilizado em conjunto com a função WHERE para filtrar linhas de uma seleção
+
+
+-- TIPOS
+-- = IGUAL
+-- > MAIOR
+-- < MENOR
+-- >= MAIOR OU IGUAL
+-- <= MENOR OU IGUAL
+-- <> DIFERENTE
+
+
+-- (exemplo 1) Uso de operadores como flag
+-- Crie uma coluna que retorne TRUE sempre que um cliente for um profissional clt
+SELECT 
+    customer_id,
+    first_name,
+    professional_status,
+    (professional_status = 'clt') as cliente_clt
+FROM sales.customers
+
+
+-- ###############################
+
+-- OPERADORES LÓGICOS
+-- Usados para unir expressões simples em um composta
+
+-- TIPOS
+-- AND
+-- OR
+-- NOT
+-- BETWEEN
+-- IN
+-- LIKE
+-- ILIKE
+-- IS NULL
+
+-- (exemplo 1) Uso do comando BETWEEN
+-- Selecione veículos que custam entre 100k e 200k na tabela products
+SELECT *
+FROM sales.products
+WHERE price BETWEEN 100000 and 200000
+
+
+-- (exemplo 2) Uso do comando NOT
+-- Selecione veículos que custam abaixo 100k ou acima 200k na tabela products
+SELECT *
+FROM sales.products
+WHERE price NOT BETWEEN 100000 and 200000
+
+
+-- (exemplo 3) Uso do comando IN
+-- Selecione produtos que sejam da marca HONDA, TOYOTA ou RENAULT
+SELECT *
+FROM sales.products
+WHERE brand in ('HONDA', 'TOYOTA', 'RENAULT')
+
+-- Caminho inverso usando o NOT
+SELECT *
+FROM sales.products
+WHERE brand not in ('HONDA', 'TOYOTA', 'RENAULT')
+
+-- (exemplo 4) Uso do comando LIKE (matchs imperfeitos)
+-- Selecione os primeiros nomes distintos da tabela customers que começam
+-- com as inicias ANA
+SELECT DISTINCT first_name
+FROM sales.customers
+WHERE first_name LIKE 'ANA%'
+
+-- Nomes que terminam com 'ANA'
+SELECT DISTINCT first_name
+FROM sales.customers
+WHERE first_name LIKE '%ANA'
+
+
+-- (exemplo 5) Uso do comando ILIKE (ignora letras maiúsculas e minúsculas)
+-- Selecione os primeiros nomes distintos com iniciais 'ana'
+SELECT DISTINCT first_name
+FROM sales.customers
+WHERE first_name ILIKE 'ana%'
+
+-- (exemplo 6) Uso do comando IS NULL
+-- Selecionar apenas as linhas que contém nulo no campo "population" na tabela
+-- temp_tables.registros
+SELECT *
+FROM temp_tables.registros
+WHERE population is null
+
+-- EXERCÍCIOS OPERADORES ######################################################################
+
+-- (Exercício 1) Calcule quantos salários mínimos ganha cada cliente da tabela 
+-- sales.customers. Selecione as colunas de: email, income e a coluna calculada "salários mínimos"
+-- Considere o salário mínimo igual à R$1200
+SELECT
+	email,
+	income,
+	(income) / 1200 as "salários mínimos"
+FROM sales.customers
+
+
+
+-- (Exercício 2) Na query anterior acrescente uma coluna informando TRUE se o cliente
+-- ganha acima de 5 salários mínimos e FALSE se ganha 4 salários ou menos.
+-- Chame a nova coluna de "acima de 4 salários"
+SELECT
+	email,
+	income,
+	(income) / 1200 as "salários mínimos",
+	((income) / 1200) > 4 as "acima de 4 salários"
+FROM sales.customers
+
+
+-- (Exercício 3) Na query anterior filtre apenas os clientes que ganham entre
+-- 4 e 5 salários mínimos. Utilize o comando BETWEEN
+SELECT
+	email,
+	income,
+	(income) / 1200 as "salários mínimos",
+	((income) / 1200) > 4 as "acima de 4 salários"
+FROM sales.customers
+WHERE ((income) / 1200) BETWEEN 4 and 5
+
+
+
+-- (Exercício 4) Selecine o email, cidade e estado dos clientes que moram no estado de 
+-- Minas Gerais e Mato Grosso. 
+SELECT email, city, state
+FROM sales.customers
+WHERE state in ('MT', 'MG')
+
+
+
+-- (Exercício 5) Selecine o email, cidade e estado dos clientes que não 
+-- moram no estado de São Paulo.
+SELECT email, city, state
+FROM sales.customers
+WHERE state not in ('SP')
+
+
+-- (Exercício 6) Selecine os nomes das cidade que começam com a letra Z.
+-- Dados da tabela temp_table.regions
+SELECT city
+FROM temp_tables.regions
+WHERE city ILIKE 'z%'
+
+
+-- ###########################################
+
+-- FUNÇÕES DE AGREGAÇÕES
+-- Servem para executar operações aritméticas nos registros de uma coluna
+
+-- TIPOS
+-- COUNT()
+-- SUM()
+-- MIN()
+-- MAX()
+-- AVG()
+
+-- (exemplo 1) Contagem de todas as linhas de uma tabela
+-- Conte todas as visitas realizadas ao site da empresa fictícia
+SELECT COUNT(*)
+FROM sales.funnel
+
+-- (exemplo 2) Contagem das linhas de uma coluna
+-- Conte todos os pagamentos registrados na tabela sales.funnel
+SELECT COUNT(paid_date)
+FROM sales.funnel
+
+-- (exemplo 3) Contagem distintas de uma coluna
+-- Conte todos os produtos distintos visitados em jan/21
+SELECT COUNT(DISTINCT product_id)
+FROM sales.funnel
+WHERE visit_page_date BETWEEN '2021-01-01' and '2021-01-31'
+
+-- (exemplo 4) Calcule o preço mínimo, máximo e médio dos productos da tabela products
+SELECT min(price), max(price), avg(price)
+FROM sales.products
+
+
+-- (exemplo 5) Informe qual é o veiculo mais caro da tabela products
+SELECT max(price) FROM sales.products
+
+-- utilizando um subSelect
+SELECT *
+FROM sales.products
+WHERE price = (SELECT max(price) FROM sales.products) -- Desta forma sempre pegará o maior valor da base, mesmo que ela seja atualizada e entre outro produto mais caro
+
+
+-- #############################
+
+-- GROUP BY
+-- Serve para agrupar registros semelhantes de uma coluna
+-- Normalmente utilizado em conjunto com as funões de agregação
+
+-- (exemplo 1) Contagem agrupada de uma coluna
+-- Calcule o nº de clientes da tabela customers por estado
+SELECT state, COUNT(*) as contagem
+FROM sales.customers
+GROUP BY state
+ORDER BY contagem DESC
+
+
+-- (exemplo 2) Contagem agrupada de várias colunas
+-- Calcule o nº de clientes por estado e status profissional
+SELECT state, professional_status, COUNT(*) as contagem
+FROM sales.customers
+GROUP BY state, professional_status
+ORDER BY state, contagem DESC
+
+
+-- (exemplo 3) Seleção de valores distintos
+-- Selecione os estados distintos na tabela customers utilizando o group by
+SELECT DISTINCT state
+FROM sales.customers
+
+-- Outra maneira
+SELECT state
+FROM sales.customers
+GROUP BY state
+
+
+-- #################################
+
+-- HAVING
+-- Serve para filtrar linha da seleção por uma coluna agrupada
+
+
+-- (exemplo 1) Seleção com filto HAVING
+-- Calcule o nº de clientes por estado filtrando apenas estados acima  de 100 clientes
+SELECT
+    state,
+    COUNT(*)
+FROM sales.customers
+GROUP BY state
+HAVING count(*) > 100
+
+-- Outra forma excluindo o estado de MG
+SELECT
+    state,
+    COUNT(*)
+FROM sales.customers
+WHERE state <> 'MG'
+GROUP BY state
+HAVING count(*) > 100
+
+
+-- ##############################
+
+-- TIPOS DE JOIN
+-- LEFT JOIN
+-- RIGHT JOIN
+-- INNER JOIN
+-- FULL JOIN
+
+-- (exemplo 1) Utilize o LEFT JOIN para fazer join entre as tabelas
+-- temp_tables.tabela_1 e temp_tables.tabela_2
+SELECT * FROM temp_tables.tabela_1
+SELECT * FROM temp_tables.tabela_2
+
+SELECT t1.cpf, t1.name, t2.state
+FROM temp_tables.tabela_1 as t1
+LEFT JOIN temp_tables.tabela_2 as t2
+on t1.cpf = t2.cpf
+
+-- (exemplo 2) Utilize o INNER JOIN para fazer join entre as tabelas
+-- temp_tables.tabela_1 e temp_tables.tabela_2
+SELECT t1.cpf, t1.name, t2.state
+FROM temp_tables.tabela_1 as t1
+INNER JOIN temp_tables.tabela_2 as t2
+on t1.cpf = t2.cpf
+
+-- (exemplo 3) Utilize o RIGHT JOIN para fazer join entre as tabelas
+-- temp_tables.tabela_1 e temp_tables.tabela_2
+SELECT t2.cpf, t1.name, t2.state
+FROM temp_tables.tabela_1 as t1
+RIGHT JOIN temp_tables.tabela_2 as t2
+on t1.cpf = t2.cpf
+
+
+-- (exemplo 4) Utilize o FULL JOIN para fazer join entre as tabelas
+-- temp_tables.tabela_1 e temp_tables.tabela_2
+SELECT t2.cpf, t1.name, t2.state
+FROM temp_tables.tabela_1 as t1
+FULL JOIN temp_tables.tabela_2 as t2
+on t1.cpf = t2.cpf
+
+
+-- EXERCICIOS
+-- (exercicio 1) Identifique qual é o status profissional mais frequente nos clientes
+-- que compraram automóveis no site
+SELECT
+    cus.professional_status,
+    count(fun.paid_date) as pagamentos
+FROM sales.funnel as fun
+LEFT JOIN sales.customers as cus
+on fun.customer_id = cus.customer_id
+GROUP BY cus.professional_status
+ORDER BY pagamentos DESC
+
+
+-- (exercicio 2) Identifique qual é o genero mais frequente nos clientes que compraram
+-- automóveis no site. Obs. Utilizar a tabela temp_tables.ibge_genders
+SELECT
+    ibge.gender,
+    count(fun.paid_date)
+FROM sales.funnel as fun
+LEFT JOIN sales.customers as cus
+    on fun.customer_id = cus.customer_id
+LEFT JOIN temp_tables.ibge_genders as ibge
+    on lower(cus.first_name) = ibge.first_name
+GROUP BY ibge.gender
+
+
+-- (exercicios 3) Identifique de quais regiões são os clientes que mais visitam o site
+-- OBS. Utilizar a tabela temp_tables.regions
+SELECT
+    reg.region,
+    count(fun.visit_page_date) as visitas
+FROM sales.funnel as fun
+LEFT JOIN sales.customers as cus
+    on fun.customer_id = cus.customer_id
+LEFT JOIN temp_tables.regions as reg
+    on lower(cus.city) = lower(reg.city)
+    and lower(cus.state) = lower(reg.state)
+GROUP BY reg.region
+ORDER BY visitas DESC
+
+
+-- ##################################
+
+-- UNION
+-- Una a tabela sales.products com a tabela temp_tables.products_2
+SELECT * FROM sales.products
+union all
+SELECT * FROM temp_tables.products_2
+
+-- ################################
+
+-- SUBQUERY
+-- Servem para consultar dados de outras consultas.
+
+-- TIPOS
+-- SUBQUERY no WHERE
+-- SUBQUERY no WITH
+-- SUBQUERY no FROM
+-- SUBQUERY no SELECT
+
+-- (exemplo 1) Subquery no WHERE
+-- Informe qual é o veículo mais barato da tabela products
+-- A subquery no WHERE tem que retornar apenas um valor
+SELECT *
+FROM sales.products
+WHERE price = (select min(price) from sales.products)
+
+-- (exemplo 2) Subquery com WITH (é a mais usada para analise de dados)
+-- Calcular a idade média dos clientes por status profissional
+WITH alguma_tabela as(
+SELECT
+    professional_status,
+    (current_date - birth_date)/365 as idade
+FROM sales.customers
+)
+
+SELECT
+    professional_status,
+    AVG(idade) as idade_media
+FROM alguma_tabela
+GROUP BY professional_status
+
+
+-- (exemplo 3) Subquery no FROM
+-- Calcular a idade média dos clientes por status profissional
+SELECT
+    professional_status,
+    AVG(idade) as idade_media
+FROM (
+        SELECT
+        professional_status,
+        (current_date - birth_date)/365 as idade
+    FROM sales.customers
+    ) as alguma_tabela
+GROUP BY professional_status
+
+-- (exemplo 4) Subquery no SELECT (é bem pesada realizar essa função)
+-- Na tabela sales.funnel crie uma coluna que informe o nº de visitas acumuladas
+-- que a loja visitada recebeu até o momento
+SELECT
+    fun.visit_id,
+    fun.visit_page_date,
+    sto.store_name,
+    (
+        SELECT COUNT(*)
+        FROM sales.funnel as fun2
+        WHERE fun2.visit_page_date <= fun.visit_page_date
+            and fun2.store_id = fun.store_id
+    ) as visitas_acumuladas
+FROM sales.funnel as fun
+LEFT JOIN sales.stores as sto
+    on fun.store_id = sto.store_id
+ORDER BY sto.store_name, fun.visit_page_date
+
+-- EXERCICIOS
+
+-- (exercicios 1) Análise de recorrência dos leads
+-- Calcule o volume de visitas por dia ao site separando por 1ª visita e demais visitas
+WITH primeira_visita as(
+    SELECT customer_id, min(visit_page_date) as visita_1
+    FROM sales.funnel
+    GROUP BY customer_id
+)
+
+SELECT
+    fun.visit_page_date,
+    (fun.visit_page_date <> primeira_visita.visita_1) as lead_recorrente,
+    count(*)
+    
+FROM sales.funnel as fun
+LEFT JOIN primeira_visita
+    on fun.customer_id = primeira_visita.customer_id
+GROUP BY fun.visit_page_date, lead_recorrente
+ORDER BY fun.visit_page_date DESC, lead_recorrente
+
+
+-- (exercicios 2) Análise do preço versus o preço médio
+-- Calcule, para cada visita ao site, quanto o preço de um veículo visitado pelo cliente
+-- estava acima ou abaixo do preço médio dos veículos daquelas marcas
+-- (levar em consideração o desconto dado no veículo)
+WITH preco_medio as(
+    SELECT brand, avg(price) as preco_medio_da_marca
+    FROM sales.products
+    GROUP BY brand
+)
+
+SELECT
+    fun.visit_id,
+    fun.visit_page_date,
+    pro.brand,
+    (pro.price * (1+fun.discount)) as preco_final,
+    preco_medio.preco_medio_da_marca,
+    ((pro.price * (1+fun.discount)) - preco_medio.preco_medio_da_marca) as preco_vs_media
+    
+FROM sales.funnel as fun
+LEFT JOIN sales.products as pro
+    on fun.product_id = pro.product_id
+LEFT JOIN preco_medio
+    on pro.brand = preco_medio.brand
+    
+-- EXERCÍCIOS ########################################################################
+
+-- (Exercício 1) Crie uma coluna calculada com o número de visitas realizadas por cada
+-- cliente da tabela sales.customers
+with numero_de_visitas as (
+
+	select customer_id, count(*) as n_visitas
+	from sales.funnel
+	group by customer_id
+
+)
+
+select
+	cus.*,
+	n_visitas
+
+from sales.customers as cus
+left join numero_de_visitas as ndv
+	on cus.customer_id = ndv.customer_id
